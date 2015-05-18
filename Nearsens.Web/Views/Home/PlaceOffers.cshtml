@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "PlaceOffers";
+}
+
+<h2>PlaceOffers</h2>
+<table id="placesList" class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+
+            <th>
+
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    @{
+        foreach (Nearsens.Models.Offer offer in Model.offersByPlace)
+        {
+
+            <tr id="@offer.Id">
+                <td> <a href="@Url.Action("OfferDetail/" + offer.Id, "Home")"> @offer.Title </a> </td>
+                <td> <a class="btn btn-default"> Edit </a> </td>
+                <td> <a class="btn btn-danger"> Delete </a> </td>
+            </tr>
+        }
+
+    }
+
+</table>

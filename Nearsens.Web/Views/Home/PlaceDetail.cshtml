@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "PlaceDetail";
+    var currentPlace = Model.place;
+}
+<br />
+<p>Title</p>
+<input type="text" value="@currentPlace.Name" />
+<p>Description</p>
+<textarea >@currentPlace.Description</textarea>
+<p>Latitude</p>
+<input type="text" value="@currentPlace.Lat" />
+<p>Longitude</p>
+<input type="text" value="@currentPlace.Lng" />
+<p>Main category</p>
+<input type="text" value="@currentPlace.MainCategory" />
+<p>Subcategory</p>
+<input type="text" value="@currentPlace.Subcategory" />
+<br />
+<input type="button" value="Modifica" />
+
