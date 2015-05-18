@@ -31,6 +31,7 @@ namespace Nearsens.Web.Controllers
             return View(list);
         }
 
+        [Authorize]
         public ActionResult PlaceDetail(long id)
         {
             list = new ModelList
@@ -41,6 +42,7 @@ namespace Nearsens.Web.Controllers
             return View(list);
         }
 
+        [Authorize]
         public ActionResult PlaceOffers(long id)
         {
             list = new ModelList
@@ -51,6 +53,7 @@ namespace Nearsens.Web.Controllers
             return View(list);
         }
 
+        [Authorize]
         public ActionResult OfferDetail(long id)
         {
             list = new ModelList

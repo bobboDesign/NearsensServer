@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetNearestOffersQuery.cs" />
     <Compile Include="GetNearestPlacesQuery.cs" />
     <Compile Include="GetOffersByPlaceIdQuery.cs" />
     <Compile Include="GetOfferQuery.cs" />
