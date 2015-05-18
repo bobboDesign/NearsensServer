@@ -2,30 +2,126 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<table id="placesList" class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+
+            <th>
+                
+            </th>
+
+            <th>
+                
+            </th>
+        </tr>
+    </thead>
+
+    <tbody id="content">
+        @{
+            foreach (Nearsens.Models.GetPlacesByUserIdQuery place in Model.places)
+            {
+                <tr id="@place.Id">
+                    <td> <a href="@Url.Action("PlaceOffers/" + place.Id, "Home")"> @place.Name </a> </td>
+                    <td> <a href="@Url.Action("PlaceDetail/" + place.Id, "Home")" class="btn btn-info"> Info </a> </td>
+                    <td> <a class="btn btn-danger btnDeletePlace"> Delete </a> </td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+
+<a class="btn btn-success" id="btnAddPlace" data-toggle="modal" data-target="#myModal"> Add place </a>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New place</h4>
+            </div>
+            <form id="newPlaceForm">
+                <div class="modal-body">
+
+
+                    <input type="text" id="txtName" class="form-control" placeholder="Name" required />
+                    <textarea id="txtDescription" class="form-control" placeholder="Description" required></textarea>
+                    <select id="slctCategory" class="form-control" required>
+                        <option value="AC">Attività commerciale</option>
+                        <option value="POI">POI</option>
+                    </select>
+                    <select id="slctSubcategory" class="form-control" required>
+                        @{
+                            foreach (string subcategory in Model.subcategories)
+                            {
+                                <option value="@subcategory">@subcategory</option>
+                            }
+                        }
+                    </select>
+
+                    <input type="number" id="txtLat" class="form-control" placeholder="Latitude" step="any" required />
+                    <input type="number" id="txtLng" class="form-control" placeholder="Longitude" step="any" required />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+@section scripts {
+    <script type="text/javascript">
+       
+
+        $('#newPlaceForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var place = {};
+            place.Name = $('#txtName').val();
+            place.Description = $('#txtDescription').val();
+            place.MainCategory = $('#slctCategory').val();
+            place.Subcategory = $('#slctSubcategory').val();
+            place.Lat = $('#txtLat').val();
+            place.Lng = $('#txtLng').val();
+
+            $.ajax({
+                url: '/api/Places',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(place),
+                success: function (data) {
+                    alert('Place added');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+
+        $('.btnDeletePlace').on('click', function () {
+            
+            var placeId = $(this).parent().parent().attr('id');
+
+            $.ajax({
+                url: '/api/Places/' + placeId,
+                type: 'DELETE',
+                success: function (data) {
+                    alert('Place removed');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+    </script>
+}
+

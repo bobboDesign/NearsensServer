@@ -41,20 +41,24 @@ namespace Nearsens.Web.Controllers
 
         // POST: api/Places
         [Authorize]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Place place)
         {
+            place.UserId = HttpContext.Current.User.Identity.GetUserId();
+            repository.InsertPlace(place);
         }
 
         // PUT: api/Places/5
         [Authorize]
-        public void Put(int id, [FromBody]string value)
+        public void Put(Place place)
         {
+            repository.UpdatePlace(place);
         }
 
         // DELETE: api/Places/5
         [Authorize]
-        public void Delete(int id)
+        public void Delete(long id)
         {
+            repository.DeletePlace(id);
         }
     }
 }

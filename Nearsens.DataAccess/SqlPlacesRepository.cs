@@ -194,6 +194,95 @@ FROM    dbo.places
             return orderedList;
         }
 
+        public void InsertPlace(Place place)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+INSERT INTO [dbo].[places]
+		   ([name]
+		   ,[description]
+		   ,[lat]
+		   ,[lng]
+           ,[main_category]
+           ,[subcategory]
+           ,[user_id])
+	 VALUES
+		   (@name
+		   ,@description
+		   ,@lat
+		   ,@lng
+		   ,@main_category
+           ,@subcategory
+           ,@user_id)";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", place.Name));
+                    command.Parameters.Add(new SqlParameter("@description", place.Description));
+                    command.Parameters.Add(new SqlParameter("@lat", place.Lat));
+                    command.Parameters.Add(new SqlParameter("@lng", place.Lng));
+                    command.Parameters.Add(new SqlParameter("@main_category", place.MainCategory));
+                    command.Parameters.Add(new SqlParameter("@subcategory", place.Subcategory));
+                    command.Parameters.Add(new SqlParameter("@user_id", place.UserId));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+
+        }
+
+
+        public void DeletePlace(long id)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+DELETE FROM [dbo].[places]
+ WHERE id = @id";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void UpdatePlace(Place place)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+UPDATE [dbo].[places]
+   SET [description] = @description
+	  ,[name] = @name
+	  ,[main_category] = @main_category
+	  ,[subcategory] = @subcategory
+	  ,[lat] = @lat
+	  ,[lng] = @lng
+	  ,[icon] = @icon
+ WHERE id = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", place.Id));
+                    command.Parameters.Add(new SqlParameter("@description", place.Description));
+                    command.Parameters.Add(new SqlParameter("@name", (object)place.Name ?? DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@main_category", (object)place.MainCategory ?? DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@subcategory", (object)place.Subcategory ?? DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@lat", (object)place.Lat ?? DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@lng", (object)place.Lng ?? DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@icon", (object)place.Icon ?? DBNull.Value));
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
         private string BuildWhereClause(string query, string category, string subcategory)
         {
             if (category == null && subcategory == null)
