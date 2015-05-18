@@ -40,8 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GetNearestPlacesQuery.cs" />
+    <Compile Include="GetOffersByPlaceIdQuery.cs" />
+    <Compile Include="GetOfferQuery.cs" />
     <Compile Include="GetPlaceQuery.cs" />
     <Compile Include="GetPlacesByUserIdQuery.cs" />
+    <Compile Include="Offer.cs" />
     <Compile Include="Place.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
