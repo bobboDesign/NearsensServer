@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nearsens.Web", "Nearsens.Web\Nearsens.Web.csproj", "{53114146-B2AE-4A79-A6D8-2AC0AD38F564}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nearsens.Models", "Nearsens.Models\Nearsens.Models.csproj", "{84664849-F706-497C-8FFC-D377DABBF505}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nearsens.DataAccess", "Nearsens.DataAccess\Nearsens.DataAccess.csproj", "{C066C9B3-4DDF-4DB6-85B0-07C707C87FCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nearsens.Utilities", "Nearsens.Utilities\Nearsens.Utilities.csproj", "{439D5082-0BE6-4749-BD7B-E83D26EA9645}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53114146-B2AE-4A79-A6D8-2AC0AD38F564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53114146-B2AE-4A79-A6D8-2AC0AD38F564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53114146-B2AE-4A79-A6D8-2AC0AD38F564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53114146-B2AE-4A79-A6D8-2AC0AD38F564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84664849-F706-497C-8FFC-D377DABBF505}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84664849-F706-497C-8FFC-D377DABBF505}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84664849-F706-497C-8FFC-D377DABBF505}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84664849-F706-497C-8FFC-D377DABBF505}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C066C9B3-4DDF-4DB6-85B0-07C707C87FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C066C9B3-4DDF-4DB6-85B0-07C707C87FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C066C9B3-4DDF-4DB6-85B0-07C707C87FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C066C9B3-4DDF-4DB6-85B0-07C707C87FCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{439D5082-0BE6-4749-BD7B-E83D26EA9645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{439D5082-0BE6-4749-BD7B-E83D26EA9645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{439D5082-0BE6-4749-BD7B-E83D26EA9645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{439D5082-0BE6-4749-BD7B-E83D26EA9645}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
