@@ -1,21 +1,89 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "PlaceDetail";
     var currentPlace = Model.place;
 }
 <br />
+
 <p>Title</p>
-<input type="text" value="@currentPlace.Name" />
+<input class="form-control" id="txtName" type="text" value="@currentPlace.Name" />
 <p>Description</p>
-<textarea >@currentPlace.Description</textarea>
+<textarea class="form-control" id="txtDescription">@currentPlace.Description</textarea>
 <p>Latitude</p>
-<input type="text" value="@currentPlace.Lat" />
+<input class="form-control" id="txtLat" type="text" value="@currentPlace.Lat.ToString().Replace(",", ".")" />
 <p>Longitude</p>
-<input type="text" value="@currentPlace.Lng" />
+<input class="form-control" id="txtLng" type="text" value="@currentPlace.Lng.ToString().Replace(",", ".")" />
+
 <p>Main category</p>
-<input type="text" value="@currentPlace.MainCategory" />
+<select id="slctCategory" class="form-control" required>
+    @{
+        if (currentPlace.MainCategory.Equals("AC"))
+        {
+
+            <option value="AC" selected>AC</option>
+            <option value="POI">POI</option>
+        }
+        else
+        {
+
+            <option value="AC">Commercial activity</option>
+            <option value="POI" selected>Point of interest</option>
+        }
+
+
+    }
+</select>
+
 <p>Subcategory</p>
-<input type="text" value="@currentPlace.Subcategory" />
+<select id="slctSubcategory" class="form-control" required>
+    @{
+        foreach (string subcategory in Model.subcategories)
+        {
+            if (@currentPlace.Subcategory.Equals(subcategory))
+            {
+                <option value="@currentPlace.Subcategory" selected>@currentPlace.Subcategory</option>
+            }
+            else
+            {
+                <option value="@subcategory">@subcategory</option>
+            }
+        }
+    }
+</select>
 <br />
-<input type="button" value="Modifica" />
+<input class="btn btn-group" id="btnUpdatePlace" type="button" value="Update" />
+
+@section scripts {
+    <script type="text/javascript">
+        $('#btnUpdatePlace').on('click', function (e) {
+
+            var place = {};
+            place.Name = $('#txtName').val();
+            place.Description = $('#txtDescription').val();
+            place.MainCategory = $('#slctCategory').val();
+            place.Subcategory = $('#slctSubcategory').val();
+            place.Lat = parseFloat($('#txtLat').val());
+            place.Lng = parseFloat($('#txtLng').val());
+            place.Id = @currentPlace.Id;
+
+
+
+            console.log(place);
+
+            $.ajax({
+                url: '/api/Places/',
+                type: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(place),
+                success: function (data) {
+                    alert('Place updated');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+    </script>
+}
 

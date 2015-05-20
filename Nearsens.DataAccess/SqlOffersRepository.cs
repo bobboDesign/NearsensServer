@@ -84,7 +84,7 @@ SELECT  id ,
 		expiration_date ,
 		start_date ,
 		link ,
-        previous_price,
+        discount,
         price,
         title
 FROM    dbo.offers
@@ -103,7 +103,7 @@ WHERE id = @id
                             offer.Description = (string)reader["description"];
                             offer.ExpirationDate = (DateTime)reader["expiration_date"];
                             offer.StartDate = (DateTime)reader["start_date"];
-                            offer.PreviousPrice = (double)reader["previous_price"];
+                            offer.Discount = (int)reader["discount"];
                             offer.Price = (double)reader["price"];
                             offer.Link = reader["link"] == DBNull.Value ? (string)null : (string)reader["link"];
                             offer.Icon = reader["icon"] == DBNull.Value ? (string)null : (string)reader["icon"];
@@ -126,7 +126,7 @@ WHERE id = @id
 SELECT  dbo.offers.id ,
 		title ,
 		price ,
-		previous_price ,
+		discount ,
         dbo.offers.icon ,
         name ,
         lat ,
@@ -150,7 +150,7 @@ WHERE dbo.offers.id_place = dbo.places.id
                             offer.Id = (long)reader["id"];
                             offer.Title = (string)reader["title"];
                             offer.Price = (double)reader["price"];
-                            offer.PreviousPrice = (double)reader["previous_price"];
+                            offer.Discount = (int)reader["discount"];
                             offer.Icon = reader["icon"] == DBNull.Value ? (string)null : (string)reader["icon"];
                             offer.PlaceName = (string)reader["name"];
                             offer.PlaceLat = (double)reader["lat"];
@@ -168,6 +168,91 @@ WHERE dbo.offers.id_place = dbo.places.id
             return orderedList;
         }
 
+        public void InsertOffer(Offer offer)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+INSERT INTO [dbo].[offers]
+		   ([title]
+		   ,[description]
+		   ,[start_date]
+		   ,[expiration_date]
+           ,[price]
+           ,[discount]
+           ,[id_place])
+	 VALUES
+		   (@title
+		   ,@description
+		   ,@start_date
+		   ,@expiration_date
+		   ,@price
+           ,@discount
+           ,@id_place)";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@title", offer.Title));
+                    command.Parameters.Add(new SqlParameter("@description", offer.Description));
+                    command.Parameters.Add(new SqlParameter("@start_date", offer.StartDate));
+                    command.Parameters.Add(new SqlParameter("@expiration_date", offer.ExpirationDate));
+                    command.Parameters.Add(new SqlParameter("@price", offer.Price));
+                    command.Parameters.Add(new SqlParameter("@discount", offer.Discount));
+                    command.Parameters.Add(new SqlParameter("@id_place", offer.IdPlace));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+
+        }
+        public void DeleteOffer(long id)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+DELETE FROM [dbo].[offers]
+ WHERE id = @id";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateOffer(Offer offer)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+UPDATE [dbo].[offers]
+   SET [description] = @description
+	  ,[title] = @title
+	  ,[price] = @price
+	  ,[discount] = @discount
+	  ,[start_date] = @start_date
+	  ,[expiration_date] = @expiration_date
+ WHERE id = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", offer.Id));
+                    command.Parameters.Add(new SqlParameter("@description", offer.Description));
+                    command.Parameters.Add(new SqlParameter("@title", offer.Title));
+                    command.Parameters.Add(new SqlParameter("@price", offer.Price));
+                    command.Parameters.Add(new SqlParameter("@discount", offer.Discount));
+                    command.Parameters.Add(new SqlParameter("@start_date", offer.StartDate));
+                    command.Parameters.Add(new SqlParameter("@expiration_date", offer.ExpirationDate));
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
         private string BuildWhereClause(string query, string category, string subcategory)
         {
             if (category == null && subcategory == null)

@@ -25,11 +25,94 @@
 
             <tr id="@offer.Id">
                 <td> <a href="@Url.Action("OfferDetail/" + offer.Id, "Home")"> @offer.Title </a> </td>
-                <td> <a class="btn btn-default"> Edit </a> </td>
-                <td> <a class="btn btn-danger"> Delete </a> </td>
+       <td> <a class="btn btn-danger btnDeleteOffer"> Delete </a> </td>
             </tr>
         }
 
     }
 
 </table>
+
+<a class="btn btn-success" id="btnAddOffer" data-toggle="modal" data-target="#myModal"> Add offer </a>
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New offer</h4>
+            </div>
+            <form id="newOfferForm">
+                <div class="modal-body">
+
+
+                    <input type="text" id="txtTitle" class="form-control" placeholder="Title" required />
+                    <textarea id="txtDescription" class="form-control" placeholder="Description" required></textarea>
+                    
+                
+
+                    <input type="date" id="txtStartDate" class="form-control" placeholder="Start date" required />
+                    <input type="date" id="txtExpirationDate" class="form-control" placeholder="Expiration date" required />
+
+                    <input type="number" id="txtPrice" class="form-control" placeholder="Price" step="any" required />
+                    <input type="number" id="txtDiscount" class="form-control" placeholder="Discount" max="100" min="1" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+
+        $('#newOfferForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var offer = {};
+            offer.Title = $('#txtTitle').val();
+            offer.Description = $('#txtDescription').val();
+            offer.StartDate = $('#txtStartDate').val();
+            offer.ExpirationDate = $('#txtExpirationDate').val();
+            offer.Price = $('#txtPrice').val().replace(",", ".");
+            offer.Discount = $('#txtDiscount').val();
+            offer.IdPlace = @Request.Url.Segments.Last();
+
+            $.ajax({
+                url: '/api/Offers',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(offer),
+                success: function (data) {
+                    alert('Offer added');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+
+        $('.btnDeleteOffer').on('click', function () {
+            
+            var offerId = $(this).parent().parent().attr('id');
+
+            $.ajax({
+                url: '/api/Offers/' + offerId,
+                type: 'DELETE',
+                success: function (data) {
+                    alert('Offer removed');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+
+    </script>
+}

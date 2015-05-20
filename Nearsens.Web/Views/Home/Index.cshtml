@@ -6,7 +6,7 @@
     <thead>
         <tr>
             <th>
-                Name
+                Your places
             </th>
 
             <th>
@@ -65,6 +65,8 @@
                     <input type="number" id="txtLat" class="form-control" placeholder="Latitude" step="any" required />
                     <input type="number" id="txtLng" class="form-control" placeholder="Longitude" step="any" required />
 
+                    
+
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Add</button>
@@ -87,8 +89,8 @@
             place.Description = $('#txtDescription').val();
             place.MainCategory = $('#slctCategory').val();
             place.Subcategory = $('#slctSubcategory').val();
-            place.Lat = $('#txtLat').val();
-            place.Lng = $('#txtLng').val();
+            place.Lat = $('#txtLat').val().replace(",", ".");
+            place.Lng = $('#txtLng').val().replace(",", ".");
 
             $.ajax({
                 url: '/api/Places',

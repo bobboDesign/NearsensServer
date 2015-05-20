@@ -109,7 +109,34 @@ WHERE id = @id
             }
             return place;
         }
+        public string GetIdUserOfThePlace(long idPlace)
+        {
+            string id = "";
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
+                string query = @"
+SELECT  user_id
+FROM    dbo.places
+WHERE id = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", idPlace));
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            id = (string)reader["user_id"];
+                           
+
+                        }
+                    }
+                }
+            }
+            return id;
+        }
         public IEnumerable<GetPlacesByUserIdQuery> GetPlacesByUserId(string id)
         {
             List<GetPlacesByUserIdQuery> places = new List<GetPlacesByUserIdQuery>();
@@ -230,7 +257,6 @@ INSERT INTO [dbo].[places]
                     int count = command.ExecuteNonQuery();
                 }
             }
-
         }
 
 

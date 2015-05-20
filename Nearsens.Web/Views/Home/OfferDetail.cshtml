@@ -3,8 +3,86 @@
     ViewBag.Title = "OfferDetail";
     var currentOffer = Model.offerDetail;
 }
+<br />
 
-<h2>@currentOffer.Title</h2>
+<p>Title</p>
+<input class="form-control" id="txtTitle" type="text" value="@currentOffer.Title" />
+<p>Description</p>
+<textarea class="form-control" id="txtDescription">@currentOffer.Description</textarea>
+<p>Price</p>
+<input class="form-control" id="txtPrice" type="text" value="@currentOffer.Price.ToString().Replace(",", ".")" />
+<p>Discount (%)</p>
+<input class="form-control" id="txtDiscount" type="number" max="100" min="1" value="@currentOffer.Discount" />
+<p>Start Date</p>
+<input class="form-control datePicker" id="txtStartDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.StartDate)" />
+<p>Expiration Date</p>
+<input class="form-control datePicker" id="txtExpirationDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.ExpirationDate)" />
+<label id="lblError" style="display: none; color: red"> The expiration date must be after the start date </label>
+<br />
+<input class="btn btn-group" id="btnUpdateOffer" type="button" value="Update" />
 
+@section scripts {
+    <script type="text/javascript">
 
+        $('#btnUpdateOffer').on('click', function (e) {
 
+            var offer = {};
+            offer.Title = $('#txtTitle').val();
+            offer.Description = $('#txtDescription').val();
+            offer.StartDate = $('#txtStartDate').val();
+            offer.ExpirationDate = $('#txtExpirationDate').val();
+            offer.Price = $('#txtPrice').val().replace(",", ".");
+            offer.Discount = $('#txtDiscount').val();
+            offer.Id = @currentOffer.Id;
+
+            $.ajax({
+                url: '/api/Offers/',
+                type: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(offer),
+                success: function (data) {
+                    alert('Place updated');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Error on Login' + error.statusCode);
+                }
+            });
+        });
+
+        $('#txtExpirationDate').on('change', function() {
+            
+            var startDate = new Date($('#txtStartDate').val());
+            var expirationDate = new Date($('#txtExpirationDate').val());
+
+            if (expirationDate < startDate){
+                $(this).blur(); 
+                $(this).addClass('input-error');
+                $('#lblError').show();
+            }
+            else {
+                $('.datePicker').removeClass('input-error');
+                $('#lblError').hide();
+            }
+  
+        });
+        $('#txtStartDate').on('change', function() {
+            
+            var startDate = new Date($('#txtStartDate').val());
+            var expirationDate = new Date($('#txtExpirationDate').val());
+
+            if (expirationDate < startDate){
+                $(this).blur(); 
+                $(this).addClass('input-error');
+                $('#lblError').show();
+            }
+            else {
+                $('.datePicker').removeClass('input-error');
+                $('#lblError').hide();
+            }
+  
+        });
+
+</script>
+}

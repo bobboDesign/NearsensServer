@@ -34,12 +34,22 @@ namespace Nearsens.Web.Controllers
         [Authorize]
         public ActionResult PlaceDetail(long id)
         {
-            list = new ModelList
+            string userId = placesRepository.GetIdUserOfThePlace(id);
+            string userLogin = System.Web.HttpContext.Current.User.Identity.GetUserId();
+            if (userId.Equals(userLogin))
             {
-                place = placesRepository.GetPlaceById(id)
+                list = new ModelList
+                {
+                    subcategories = subcategoriesRepository.GetAll(),
+                    place = placesRepository.GetPlaceById(id)
 
-            };
-            return View(list);
+                };
+                return View(list);
+            }
+            else
+            {
+                return View("../Shared/Error");
+            }
         }
 
         [Authorize]

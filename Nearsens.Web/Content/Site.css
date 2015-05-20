@@ -22,3 +22,7 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.input-error {
+    border:1px solid #db2a2a;
+}

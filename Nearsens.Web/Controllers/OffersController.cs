@@ -26,18 +26,21 @@ namespace Nearsens.Web.Controllers
         }
 
         // POST: api/Offers
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Offer offer)
         {
+            repository.InsertOffer(offer);
         }
 
         // PUT: api/Offers/5
-        public void Put(int id, [FromBody]string value)
+        public void Put([FromBody]Offer offer)
         {
+            repository.UpdateOffer(offer);
         }
 
         // DELETE: api/Offers/5
         public void Delete(int id)
         {
+            repository.DeleteOffer(id);
         }
     }
 }
