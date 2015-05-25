@@ -64,7 +64,8 @@ namespace Nearsens.Web.Controllers
             string pathToDelete = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + id);
             offersRepository.DeleteOffersByPlaceId(id);
             placesRepository.DeletePlace(id);
-            Directory.Delete(pathToDelete, true);
+            if (Directory.Exists(pathToDelete))
+                Directory.Delete(pathToDelete, true);
         }
     }
 }

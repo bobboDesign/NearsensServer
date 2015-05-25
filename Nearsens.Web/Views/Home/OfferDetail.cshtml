@@ -5,26 +5,35 @@
 }
 <br />
 
-<p>Title</p>
-<input class="form-control" id="txtTitle" type="text" value="@currentOffer.Title" />
-<p>Description</p>
-<textarea class="form-control" id="txtDescription">@currentOffer.Description</textarea>
-<p>Price</p>
-<input class="form-control" id="txtPrice" type="text" value="@currentOffer.Price.ToString().Replace(",", ".")" />
-<p>Discount (%)</p>
-<input class="form-control" id="txtDiscount" type="number" max="100" min="1" value="@currentOffer.Discount" />
-<p>Start Date</p>
-<input class="form-control datePicker" id="txtStartDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.StartDate)" />
-<p>Expiration Date</p>
-<input class="form-control datePicker" id="txtExpirationDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.ExpirationDate)" />
-<label id="lblError" style="display: none; color: red"> The expiration date must be after the start date </label>
-<br />
-<input class="btn btn-group" id="btnUpdateOffer" type="button" value="Update" />
+<form id="updateOfferForm">
+
+    <p>Title</p>
+    <input class="form-control" id="txtTitle" type="text" value="@currentOffer.Title" required />
+    <p>Description</p>
+    <textarea class="form-control" id="txtDescription" required>@currentOffer.Description</textarea>
+    <p>Price</p>
+    <input class="form-control" id="txtPrice" type="number" value="@currentOffer.Price.ToString().Replace(",", ".")" step="any" required />
+    <p>Discount (%)</p>
+    <input class="form-control" id="txtDiscount" type="number" max="100" min="1" value="@currentOffer.Discount" required />
+    <p>Start Date</p>
+    <input class="form-control datePicker" id="txtStartDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.StartDate)" required />
+    <p>Expiration Date</p>
+    <input class="form-control datePicker" id="txtExpirationDate" type="date" value="@String.Format("{0:yyyy-MM-dd}", currentOffer.ExpirationDate)" required />
+    <label id="lblError" style="display: none; color: red"> The expiration date must be after the start date </label>
+    <br />
+    <input class="btn btn-group" id="btnUpdateOffer" type="submit" value="Update" />
+</form>
 
 @section scripts {
     <script type="text/javascript">
 
-        $('#btnUpdateOffer').on('click', function (e) {
+        $('#updateOfferForm').on('submit', function (e) {
+            e.preventDefault();
+
+            if($('#lblError').is(':visible'))
+                return;
+
+
 
             var offer = {};
             offer.Title = $('#txtTitle').val();

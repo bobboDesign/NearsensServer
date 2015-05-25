@@ -4,57 +4,61 @@
 }
 <br />
 
-<p>Title</p>
-<input class="form-control" id="txtName" type="text" value="@currentPlace.Name" />
-<p>Description</p>
-<textarea class="form-control" id="txtDescription">@currentPlace.Description</textarea>
-<p>Latitude</p>
-<input class="form-control" id="txtLat" type="text" value="@currentPlace.Lat.ToString().Replace(",", ".")" />
-<p>Longitude</p>
-<input class="form-control" id="txtLng" type="text" value="@currentPlace.Lng.ToString().Replace(",", ".")" />
+<form id="placeDetailForm">
 
-<p>Main category</p>
-<select id="slctCategory" class="form-control" required>
-    @{
-        if (currentPlace.MainCategory.Equals("AC"))
-        {
+    <p>Title</p>
+    <input class="form-control" id="txtName" type="text" value="@currentPlace.Name" required />
+    <p>Description</p>
+    <textarea class="form-control" id="txtDescription" required>@currentPlace.Description</textarea>
+    <p>Latitude</p>
+    <input class="form-control" id="txtLat" type="number" value="@currentPlace.Lat.ToString().Replace(",", ".")" step="any" required />
+    <p>Longitude</p>
+    <input class="form-control" id="txtLng" type="number" value="@currentPlace.Lng.ToString().Replace(",", ".")" step="any" required />
 
-            <option value="AC" selected>AC</option>
-            <option value="POI">POI</option>
-        }
-        else
-        {
-
-            <option value="AC">Commercial activity</option>
-            <option value="POI" selected>Point of interest</option>
-        }
-
-
-    }
-</select>
-
-<p>Subcategory</p>
-<select id="slctSubcategory" class="form-control" required>
-    @{
-        foreach (string subcategory in Model.subcategories)
-        {
-            if (@currentPlace.Subcategory.Equals(subcategory))
+    <p>Main category</p>
+    <select id="slctCategory" class="form-control" required>
+        @{
+            if (currentPlace.MainCategory.Equals("AC"))
             {
-                <option value="@currentPlace.Subcategory" selected>@currentPlace.Subcategory</option>
+
+                <option value="AC" selected>AC</option>
+                <option value="POI">POI</option>
             }
             else
             {
-                <option value="@subcategory">@subcategory</option>
+
+                <option value="AC">Commercial activity</option>
+                <option value="POI" selected>Point of interest</option>
+            }
+
+
+        }
+    </select>
+
+    <p>Subcategory</p>
+    <select id="slctSubcategory" class="form-control" required>
+        @{
+            foreach (string subcategory in Model.subcategories)
+            {
+                if (@currentPlace.Subcategory.Equals(subcategory))
+                {
+                    <option value="@currentPlace.Subcategory" selected>@currentPlace.Subcategory</option>
+                }
+                else
+                {
+                    <option value="@subcategory">@subcategory</option>
+                }
             }
         }
-    }
-</select>
-<br />
-<input class="btn btn-group" id="btnUpdatePlace" type="button" value="Update" />
+    </select>
+    <br />
+    <input class="btn btn-group" id="btnUpdatePlace" type="submit" value="Update" />
+</form>
 
 @section scripts {
     <script type="text/javascript">
-        $('#btnUpdatePlace').on('click', function (e) {
+        $('#placeDetailForm').on('submit', function (e) {
+            e.preventDefault();
 
             var place = {};
             place.Name = $('#txtName').val();
