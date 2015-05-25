@@ -221,7 +221,7 @@ FROM    dbo.places
             return orderedList;
         }
 
-        public void InsertPlace(Place place)
+        public long InsertPlace(Place place)
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -236,6 +236,7 @@ INSERT INTO [dbo].[places]
            ,[main_category]
            ,[subcategory]
            ,[user_id])
+    OUTPUT INSERTED.ID
 	 VALUES
 		   (@name
 		   ,@description
@@ -254,6 +255,54 @@ INSERT INTO [dbo].[places]
                     command.Parameters.Add(new SqlParameter("@subcategory", place.Subcategory));
                     command.Parameters.Add(new SqlParameter("@user_id", place.UserId));
 
+                    return (long) command.ExecuteScalar();
+                }
+            }
+        }
+
+        public void InsertIcon(long placeId, string path)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+UPDATE [dbo].[places]
+SET [icon] = @path
+WHERE [id] = @placeId
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@path", path));
+                    command.Parameters.Add(new SqlParameter("@placeId", placeId));
+                    
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertPlacePhotos(long placeId, List<string> paths)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+INSERT INTO [dbo].[photos]
+		   ([id_place]
+		   ,[photo])
+";
+
+                query = BuildValuesClause(query, paths.Count);
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id_place", placeId));
+                    for (int i = 0; i < paths.Count; i++)
+                    {
+                        command.Parameters.Add(new SqlParameter("@path" + i, paths[i]));
+                    }
+
                     int count = command.ExecuteNonQuery();
                 }
             }
@@ -267,8 +316,11 @@ INSERT INTO [dbo].[places]
                 connection.Open();
 
                 string query = @"
+DELETE FROM [dbo].[photos]
+WHERE id_place = @id;
+
 DELETE FROM [dbo].[places]
- WHERE id = @id";
+WHERE id = @id;";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@id", id));
@@ -321,6 +373,17 @@ UPDATE [dbo].[places]
             
             return query.Remove(query.LastIndexOf("AND"));
 
+        }
+
+        private string BuildValuesClause(string query, int pathsCount)
+        {
+            query += "VALUES";
+            for (int i = 0; i < pathsCount; i++)
+            {
+                query += "(@id_place, @path" + i + "),";
+            }
+
+            return query.Remove(query.LastIndexOf(","));
         }
     }
 }

@@ -224,6 +224,24 @@ DELETE FROM [dbo].[offers]
             }
         }
 
+        public void DeleteOffersByPlaceId(long placeId)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+DELETE FROM [dbo].[offers]
+ WHERE id_place = @placeId";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@placeId", placeId));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void UpdateOffer(Offer offer)
         {
             using (var connection = new SqlConnection(connectionString))
