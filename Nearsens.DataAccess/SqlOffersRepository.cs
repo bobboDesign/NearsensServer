@@ -168,7 +168,7 @@ WHERE dbo.offers.id_place = dbo.places.id
             return orderedList;
         }
 
-        public void InsertOffer(Offer offer)
+        public long InsertOffer(Offer offer)
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -183,6 +183,7 @@ INSERT INTO [dbo].[offers]
            ,[price]
            ,[discount]
            ,[id_place])
+    OUTPUT INSERTED.ID
 	 VALUES
 		   (@title
 		   ,@description
@@ -201,11 +202,82 @@ INSERT INTO [dbo].[offers]
                     command.Parameters.Add(new SqlParameter("@discount", offer.Discount));
                     command.Parameters.Add(new SqlParameter("@id_place", offer.IdPlace));
 
+                    return (long) command.ExecuteScalar();
+                }
+            }
+        }
+
+        public void InsertIcon(long offerId, string path)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+UPDATE [dbo].[offers]
+SET [icon] = @path
+WHERE [id] = @offerId
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@path", path));
+                    command.Parameters.Add(new SqlParameter("@offerId", offerId));
+
                     int count = command.ExecuteNonQuery();
                 }
             }
-
         }
+
+        public void InsertMainPhoto(long offerId, string path)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+UPDATE [dbo].[offers]
+SET [main_photo] = @path
+WHERE [id] = @offerId
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@path", path));
+                    command.Parameters.Add(new SqlParameter("@offerId", offerId));
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertOfferPhotos(long offerId, List<string> paths)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+USE [nearsens]
+
+INSERT INTO [dbo].[photos_offers]
+		   ([id_offer]
+		   ,[photo])
+";
+
+                query = BuildValuesClause(query, paths.Count);
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id_offer", offerId));
+                    for (int i = 0; i < paths.Count; i++)
+                    {
+                        command.Parameters.Add(new SqlParameter("@path" + i, paths[i]));
+                    }
+
+                    int count = command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void DeleteOffer(long id)
         {
             using (var connection = new SqlConnection(connectionString))
@@ -213,6 +285,8 @@ INSERT INTO [dbo].[offers]
                 connection.Open();
 
                 string query = @"
+
+
 DELETE FROM [dbo].[offers]
  WHERE id = @id";
                 using (var command = new SqlCommand(query, connection))
@@ -231,6 +305,7 @@ DELETE FROM [dbo].[offers]
                 connection.Open();
 
                 string query = @"
+
 DELETE FROM [dbo].[offers]
  WHERE id_place = @placeId";
                 using (var command = new SqlCommand(query, connection))
@@ -282,6 +357,17 @@ UPDATE [dbo].[offers]
                 query += "subcategory = @subcategory AND ";
 
             return query.Remove(query.LastIndexOf("AND"));
+        }
+
+        private string BuildValuesClause(string query, int pathsCount)
+        {
+            query += "VALUES";
+            for (int i = 0; i < pathsCount; i++)
+            {
+                query += "(@id_offer, @path" + i + "),";
+            }
+
+            return query.Remove(query.LastIndexOf(","));
         }
     }
 }

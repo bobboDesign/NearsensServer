@@ -62,6 +62,69 @@ namespace Nearsens.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<List<string>> UploadOfferIcon(long offerId, long placeId)
+        {
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                var userId = HttpContext.Current.User.Identity.GetUserId();
+                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+
+                var messages = await DoSomething(uploadPath);
+
+                offersRepository.InsertIcon(offerId, uploadPath + "\\" + messages.First());
+                return messages;
+            }
+            else
+            {
+                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Request!");
+                throw new HttpResponseException(response);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<List<string>> UploadOfferMainPhoto(long offerId, long placeId)
+        {
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                var userId = HttpContext.Current.User.Identity.GetUserId();
+                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+
+                var messages = await DoSomething(uploadPath);
+
+                offersRepository.InsertMainPhoto(offerId, uploadPath + "\\" + messages.First());
+                return messages;
+            }
+            else
+            {
+                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Request!");
+                throw new HttpResponseException(response);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<List<string>> UploadOfferPhotos(long offerId, long placeId)
+        {
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                var userId = HttpContext.Current.User.Identity.GetUserId();
+                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+
+                var messages = await DoSomething(uploadPath);
+
+                offersRepository.InsertOfferPhotos(offerId, messages.Select(xx => xx.Insert(0, uploadPath + "\\")).ToList());
+                return messages;
+            }
+            else
+            {
+                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Request!");
+                throw new HttpResponseException(response);
+            }
+        }
+
         private async Task<List<string>> DoSomething(string uploadPath)
         {
             if (!Directory.Exists(uploadPath))

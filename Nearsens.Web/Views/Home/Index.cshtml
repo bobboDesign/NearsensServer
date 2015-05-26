@@ -159,10 +159,7 @@
             var files = $("#icon").get(0).files;
             if (files.length > 0) {
                 var icon = new FormData();
-                console.log(files.length);
-                for (i = 0; i < files.length; i++) {
-                    icon.append("file" + i, files[i]);
-                }
+                icon.append("file0", files[0]);
                 uploadIcon(icon);
             }
         });
@@ -194,8 +191,6 @@
                     alert('Icon uploaded');
                 },
                 error: function (error) {
-                    console.log("icon");
-                    console.log(error);
                     alert("Upload failed");
                 }
             });
@@ -212,8 +207,6 @@
                     alert('Photos uploaded');
                 },
                 error: function (error) {
-                    console.log("Photos");
-                    console.log(error);
                     alert("Upload failed");
                 }
             });

@@ -33,9 +33,9 @@
 
 </table>
 
-<a class="btn btn-success" id="btnAddOffer" data-toggle="modal" data-target="#myModal"> Add offer </a>
+<a class="btn btn-success" id="btnAddOffer" data-toggle="modal" data-target="#newOfferModal"> Add offer </a>
 
-<div id="myModal" class="modal fade">
+<div id="newOfferModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -66,53 +66,172 @@
     </div>
 </div>
 
+<div id="uploadPhotosModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Place photos</h4>
+            </div>
+            <div class="modal-body">
+
+                <label class="label label-info col-lg-12" for="icon">Icon</label>
+                <br />
+                <input type="file" id="icon" class="form-control col-lg-10" /> <input id="btnUploadIcon" type="button" class="btn btn-success btn-sm col-lg-2" value="Upload" />
+                <br style="clear:both" />
+                <label class="label label-info col-lg-12" for="mainPhoto">Main photo</label>
+                <br />
+                <input type="file" id="mainPhoto" class="form-control col-lg-10" /> <input id="btnUploadMainPhoto" type="button" class="btn btn-success btn-sm col-lg-2" value="Upload" />
+                <br style="clear:both" />
+                <label class="label label-info col-lg-12" for="photos">Photos</label>
+                <br />
+                <input type="file" id="photos" class="form-control col-lg-10" multiple /> <input id="btnUploadPhotos" type="button" class="btn btn-success btn-sm col-lg-2" value="Upload" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="btnDone" class="btn btn-info" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script type="text/javascript">
 
-        $('#newOfferForm').on('submit', function (e) {
-            e.preventDefault();
+    var newOfferId;
 
-            var offer = {};
-            offer.Title = $('#txtTitle').val();
-            offer.Description = $('#txtDescription').val();
-            offer.StartDate = $('#txtStartDate').val();
-            offer.ExpirationDate = $('#txtExpirationDate').val();
-            offer.Price = $('#txtPrice').val().replace(",", ".");
-            offer.Discount = $('#txtDiscount').val();
-            offer.IdPlace = @Request.Url.Segments.Last();
+    $('#newOfferForm').on('submit', function (e) {
+        e.preventDefault();
 
-            $.ajax({
-                url: '/api/Offers',
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(offer),
-                success: function (data) {
-                    alert('Offer added');
-                    location.reload();
+        var offer = {};
+        offer.Title = $('#txtTitle').val();
+        offer.Description = $('#txtDescription').val();
+        offer.StartDate = $('#txtStartDate').val();
+        offer.ExpirationDate = $('#txtExpirationDate').val();
+        offer.Price = $('#txtPrice').val().replace(",", ".");
+        offer.Discount = $('#txtDiscount').val();
+        offer.IdPlace = @Request.Url.Segments.Last();
+
+        $.ajax({
+            url: '/api/Offers',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(offer),
+            success: function (data) {
+                newOfferId = data;
+                alert('Offer added');
+                $('#newOfferModal').modal('hide');
+                $('#uploadPhotosModal').modal('show');
+                //location.reload();
+            },
+            error: function (error) {
+                alert('Error on Login' + error.statusCode);
+            }
+        });
+    });
+
+    $('.btnDeleteOffer').on('click', function () {
+
+        var offerId = $(this).parent().parent().attr('id');
+
+        $.ajax({
+            url: '/api/Offers/' + offerId,
+            type: 'DELETE',
+            success: function (data) {
+                alert('Offer removed');
+                location.reload();
+            },
+            error: function (error) {
+                alert('Error on Login' + error.statusCode);
+            }
+        });
+    });
+
+    $('#btnUploadIcon').on('click', function () {
+
+        var files = $("#icon").get(0).files;
+        if (files.length > 0) {
+            var icon = new FormData();
+            icon.append("file0", files[0]);
+            uploadIcon(icon);
+        }
+    });
+
+    $('#btnUploadMainPhoto').on('click', function () {
+
+        var files = $("#mainPhoto").get(0).files;
+        if (files.length > 0) {
+            var mainPhoto = new FormData();
+            mainPhoto.append("file0", files[0]);
+            uploadMainPhoto(mainPhoto);
+        }
+    });
+
+    $('#btnUploadPhotos').on('click', function () {
+
+        var files = $("#photos").get(0).files;
+        if (files.length > 0) {
+            var photos = new FormData();
+            for (i = 0; i < files.length; i++) {
+                photos.append("file" + i, files[i]);
+            }
+            uploadPhotos(photos);
+        }
+    });
+
+    $('#btnDone').on('click', function () {
+        location.reload();
+    });
+
+    function uploadIcon(icon) {
+        $.ajax({
+            type: "POST",
+            url: "/api/FileUpload/UploadOfferIcon?offerId=" + newOfferId + "&placeId=" + @Request.Url.Segments.Last(),
+            contentType: false,
+            processData: false,
+            data: icon,
+            success: function (messages) {
+                alert('Icon uploaded');
+            },
+            error: function (error) {
+                alert("Upload failed");
+            }
+        });
+    }
+
+    function uploadMainPhoto(mainPhoto) {
+        $.ajax({
+            type: "POST",
+            url: "/api/FileUpload/UploadOfferMainPhoto?offerId=" + newOfferId + "&placeId=" + @Request.Url.Segments.Last(),
+                contentType: false,
+                processData: false,
+                data: mainPhoto,
+                success: function (messages) {
+                    alert('Photo uploaded');
                 },
                 error: function (error) {
-                    alert('Error on Login' + error.statusCode);
+                    alert("Upload failed");
                 }
             });
-        });
+        }
 
-        $('.btnDeleteOffer').on('click', function () {
-            
-            var offerId = $(this).parent().parent().attr('id');
-
+        function uploadPhotos(photos) {
+            console.log(newOfferId);
             $.ajax({
-                url: '/api/Offers/' + offerId,
-                type: 'DELETE',
-                success: function (data) {
-                    alert('Offer removed');
-                    location.reload();
+                type: "POST",
+                url: "/api/FileUpload/UploadOfferPhotos?offerId=" + newOfferId + "&placeId=" + @Request.Url.Segments.Last(),
+                contentType: false,
+                processData: false,
+                data: photos,
+                success: function (messages) {
+                    alert('Photos uploaded');
                 },
                 error: function (error) {
-                    alert('Error on Login' + error.statusCode);
+                    alert("Upload failed");
                 }
             });
-        });
+        }
 
     </script>
 }

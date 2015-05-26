@@ -26,9 +26,9 @@ namespace Nearsens.Web.Controllers
         }
 
         // POST: api/Offers
-        public void Post([FromBody]Offer offer)
+        public long Post([FromBody]Offer offer)
         {
-            repository.InsertOffer(offer);
+            return repository.InsertOffer(offer);
         }
 
         // PUT: api/Offers/5
@@ -38,7 +38,7 @@ namespace Nearsens.Web.Controllers
         }
 
         // DELETE: api/Offers/5
-        public void Delete(int id)
+        public void Delete(long id)
         {
             repository.DeleteOffer(id);
         }
