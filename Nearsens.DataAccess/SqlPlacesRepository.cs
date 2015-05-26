@@ -26,47 +26,6 @@ namespace Nearsens.DataAccess
             connectionString = cs.ConnectionString;
         }
 
-//        public IEnumerable<GetNearestPlacesQuery> GetNearestPlaces(double lat, double lng)
-//        {
-//            List<GetNearestPlacesQuery> places = new List<GetNearestPlacesQuery>();
-//            using (var connection = new SqlConnection(connectionString))
-//            {
-//                connection.Open();
-
-//                string query = @"
-//        SELECT  id ,
-//        		name ,
-//        		main_category ,
-//        		subcategory ,
-//        		lat ,
-//        		lng ,
-//                icon
-//              
-//        FROM    dbo.places
-//        ";
-//                using (var command = new SqlCommand(query, connection))
-//                {
-//                    using (SqlDataReader reader = command.ExecuteReader())
-//                    {
-//                        while (reader.Read())
-//                        {
-//                            GetNearestPlacesQuery place = new GetNearestPlacesQuery();
-//                            place.Id = (long)reader["id"];
-//                            place.Name = (string)reader["name"];
-//                            place.MainCategory = (string)reader["main_category"];
-//                            place.Subcategory = (string)reader["subcategory"];
-//                            place.Lat = (double)reader["lat"];
-//                            place.Lng = (double)reader["lng"];
-//                            place.Icon = reader["icon"] == DBNull.Value ? (string)null : (string)reader["icon"];
-
-//                            places.Add(place);
-//                        }
-//                    }
-//                }
-//            }
-//            return places.OrderBy(xx => Utilities.GeoUtilities.CalculateDistance(xx.Lat, lat, xx.Lng, lng));
-//        }
-
         public GetPlaceQuery GetPlaceById(long id)
         {
             GetPlaceQuery place = new GetPlaceQuery();
@@ -107,8 +66,39 @@ WHERE id = @id
                     }
                 }
             }
+            place.Photos = GetPlacePhotos(id);
             return place;
         }
+
+        public IEnumerable<string> GetPlacePhotos(long id)
+        {
+            List<string> photos = new List<string>();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+SELECT  photo 
+      
+FROM    dbo.photos
+WHERE id_place = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var photo = (string)reader["photo"];
+                            photos.Add(photo);
+                        }
+                    }
+                }
+            }
+            return photos;
+        }
+
         public string GetIdUserOfThePlace(long idPlace)
         {
             string id = "";
@@ -129,8 +119,6 @@ WHERE id = @id
                         while (reader.Read())
                         {
                             id = (string)reader["user_id"];
-                           
-
                         }
                     }
                 }
@@ -170,8 +158,6 @@ WHERE user_id = @id
             }
             return places;
         }
-
-
 
         public IEnumerable<GetNearestPlacesQuery> GetNearestPlacesWithFilters(double lat, double lng, int? distanceLimit, string category, string subcategory)
         {

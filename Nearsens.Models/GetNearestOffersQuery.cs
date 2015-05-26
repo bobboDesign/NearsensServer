@@ -10,9 +10,9 @@ namespace Nearsens.Models
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public double Price { get; set; }
-        public double Discount { get; set; }
-        public string Icon { get; set; }
+        public decimal Price { get; set; }
+        public int Discount { get; set; }
+        public string MainPhoto { get; set; }
         public string PlaceName { get; set; }
         public double PlaceLat { get; set; }
         public double PlaceLng { get; set; }

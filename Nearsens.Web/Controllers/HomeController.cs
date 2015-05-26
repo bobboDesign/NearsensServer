@@ -57,7 +57,7 @@ namespace Nearsens.Web.Controllers
         {
             list = new ModelList
             {
-                offersByPlace = offersRepository.GetOfferByPlaceId(id)
+                offersByPlace = offersRepository.GetOffersByPlaceId(id)
 
             };
             return View(list);
@@ -68,7 +68,7 @@ namespace Nearsens.Web.Controllers
         {
             list = new ModelList
             {
-                offerDetail = offersRepository.GetOfferDetail(id)
+                offerDetail = offersRepository.GetOfferById(id)
 
             };
             return View(list);

@@ -27,7 +27,7 @@ namespace Nearsens.DataAccess
                 throw new ApplicationException(string.Format("ConnectionString '{0}' not found", connectionStringName));
             connectionString = cs.ConnectionString;
         }
-        public IEnumerable<GetOffersByPlaceIdQuery> GetOfferByPlaceId(long id)
+        public IEnumerable<GetOffersByPlaceIdQuery> GetOffersByPlaceId(long id)
         {
             List<GetOffersByPlaceIdQuery> offers = new List<GetOffersByPlaceIdQuery>();
 
@@ -67,53 +67,6 @@ WHERE id_place = @id
             return offers;
         }
 
-        public GetOfferQuery GetOfferDetail(long id)
-        {
-
-            GetOfferQuery offer = new GetOfferQuery();
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                string query = @"
-SELECT  id ,
-		id_place ,
-        description ,
-		icon ,
-		expiration_date ,
-		start_date ,
-		link ,
-        discount,
-        price,
-        title
-FROM    dbo.offers
-WHERE id = @id
-";
-                using (var command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.Add(new SqlParameter("@id", id));
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-
-                        while (reader.Read())
-                        {
-                            offer.Id = (long)reader["id"];
-                            offer.Title = (string)reader["title"];
-                            offer.Description = (string)reader["description"];
-                            offer.ExpirationDate = (DateTime)reader["expiration_date"];
-                            offer.StartDate = (DateTime)reader["start_date"];
-                            offer.Discount = (int)reader["discount"];
-                            offer.Price = (double)reader["price"];
-                            offer.Link = reader["link"] == DBNull.Value ? (string)null : (string)reader["link"];
-                            offer.Icon = reader["icon"] == DBNull.Value ? (string)null : (string)reader["icon"];
-                        }
-                    }
-                }
-            }
-            return offer;
-        }
-
         public IEnumerable<GetNearestOffersQuery> GetNearestOffers(double lat, double lng, string category, string subcategory, int? distanceLimit)
         {
             List<GetNearestOffersQuery> offers = new List<GetNearestOffersQuery>();
@@ -127,7 +80,7 @@ SELECT  dbo.offers.id ,
 		title ,
 		price ,
 		discount ,
-        dbo.offers.icon ,
+        main_photo ,
         name ,
         lat ,
         lng
@@ -149,9 +102,9 @@ WHERE dbo.offers.id_place = dbo.places.id
 
                             offer.Id = (long)reader["id"];
                             offer.Title = (string)reader["title"];
-                            offer.Price = (double)reader["price"];
+                            offer.Price = (decimal)reader["price"];
                             offer.Discount = (int)reader["discount"];
-                            offer.Icon = reader["icon"] == DBNull.Value ? (string)null : (string)reader["icon"];
+                            offer.MainPhoto = reader["main_photo"] == DBNull.Value ? (string)null : (string)reader["main_photo"];
                             offer.PlaceName = (string)reader["name"];
                             offer.PlaceLat = (double)reader["lat"];
                             offer.PlaceLng = (double)reader["lng"];
@@ -166,6 +119,81 @@ WHERE dbo.offers.id_place = dbo.places.id
             if (distanceLimit != null)
                 return orderedList.Where(xx => Utilities.GeoUtilities.CalculateDistance(xx.PlaceLat, lat, xx.PlaceLng, lng) < distanceLimit);
             return orderedList;
+        }
+
+        public GetOfferQuery GetOfferById(long id)
+        {
+            GetOfferQuery offer = new GetOfferQuery();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = @"
+SELECT  id ,
+		title ,
+        description ,
+		start_date ,
+		expiration_date ,
+		price ,
+		discount ,
+        main_photo ,
+        link
+      
+FROM    dbo.offers
+WHERE id = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            offer.Id = (long)reader["id"];
+                            offer.Title = (string)reader["title"];
+                            offer.Description = (string)reader["description"];
+                            offer.StartDate = (DateTime)reader["start_date"];
+                            offer.ExpirationDate = (DateTime)reader["expiration_date"];
+                            offer.Price = (decimal)reader["price"];
+                            offer.Discount = (int)reader["discount"];
+                            offer.MainPhoto = reader["main_photo"] == DBNull.Value ? (string)null : (string)reader["main_photo"];
+                            offer.Link = reader["link"] == DBNull.Value ? (string)null : (string)reader["link"];
+                        }
+                    }
+                }
+            }
+            offer.Photos = GetOfferPhotos(id);
+            return offer;
+        }
+
+        public IEnumerable<string> GetOfferPhotos(long id)
+        {
+            List<string> photos = new List<string>();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+string query = @"
+
+SELECT  photo 
+      
+FROM    dbo.photos_offers
+WHERE id_offer = @id
+";
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@id", id));
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var photo = (string)reader["photo"];
+                            photos.Add(photo);
+                        }
+                    }
+                }
+            }
+            return photos;
         }
 
         public long InsertOffer(Offer offer)
@@ -285,8 +313,6 @@ INSERT INTO [dbo].[photos_offers]
                 connection.Open();
 
                 string query = @"
-
-
 DELETE FROM [dbo].[offers]
  WHERE id = @id";
                 using (var command = new SqlCommand(query, connection))
@@ -305,7 +331,6 @@ DELETE FROM [dbo].[offers]
                 connection.Open();
 
                 string query = @"
-
 DELETE FROM [dbo].[offers]
  WHERE id_place = @placeId";
                 using (var command = new SqlCommand(query, connection))

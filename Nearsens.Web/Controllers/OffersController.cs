@@ -20,9 +20,9 @@ namespace Nearsens.Web.Controllers
         }
 
         // GET: api/Offers/5
-        public string Get(int id)
+        public GetOfferQuery Get(long id)
         {
-            return "value";
+            return repository.GetOfferById(id);
         }
 
         // POST: api/Offers

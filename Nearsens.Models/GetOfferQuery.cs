@@ -13,10 +13,10 @@ namespace Nearsens.Models
         public DateTime ExpirationDate { get; set; }
         public string Description { get; set; }
         public string Link { get; set; }
-        public double Price { get; set; }
-        public double Discount { get; set; }
+        public decimal Price { get; set; }
+        public int Discount { get; set; }
         public string Title { get; set; }
-        public string Icon { get; set; }
+        public string MainPhoto { get; set; }
         public IEnumerable<string> Photos { get; set; }
     }
 }

@@ -14,8 +14,7 @@ namespace Nearsens.Web.Controllers
 {
     public class PlacesController : ApiController
     {
-        SqlPlacesRepository placesRepository = new SqlPlacesRepository();
-        SqlOffersRepository offersRepository = new SqlOffersRepository();
+        SqlPlacesRepository repository = new SqlPlacesRepository();
 
         // GET: api/Places
         //public IEnumerable<GetNearestPlacesQuery> GetNearestPlaces(double lat, double lng)
@@ -25,20 +24,20 @@ namespace Nearsens.Web.Controllers
 
         public IEnumerable<GetNearestPlacesQuery> GetNearestPlacesWithFilters(double lat, double lng, int? distanceLimit = null, string category = null, string subcategory = null)
         {
-            return placesRepository.GetNearestPlacesWithFilters(lat, lng, distanceLimit, category, subcategory);
+            return repository.GetNearestPlacesWithFilters(lat, lng, distanceLimit, category, subcategory);
         }
 
         // GET: api/Places/5
         public GetPlaceQuery Get(long id)
         {
-            return placesRepository.GetPlaceById(id);
+            return repository.GetPlaceById(id);
         }
 
         [Authorize]
         public IEnumerable<GetPlacesByUserIdQuery> GetPlacesByUserId()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return placesRepository.GetPlacesByUserId(userId);
+            return repository.GetPlacesByUserId(userId);
         }
 
         // POST: api/Places
@@ -46,14 +45,14 @@ namespace Nearsens.Web.Controllers
         public long Post([FromBody]Place place)
         {
             place.UserId = HttpContext.Current.User.Identity.GetUserId();
-            return placesRepository.InsertPlace(place);
+            return repository.InsertPlace(place);
         }
 
         // PUT: api/Places/5
         [Authorize]
         public void Put(Place place)
         {
-            placesRepository.UpdatePlace(place);
+            repository.UpdatePlace(place);
         }
 
         // DELETE: api/Places/5
@@ -62,8 +61,7 @@ namespace Nearsens.Web.Controllers
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             string pathToDelete = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + id);
-            //offersRepository.DeleteOffersByPlaceId(id);
-            placesRepository.DeletePlace(id);
+            repository.DeletePlace(id);
             if (Directory.Exists(pathToDelete))
                 Directory.Delete(pathToDelete, true);
         }
