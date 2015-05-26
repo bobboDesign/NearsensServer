@@ -19,6 +19,7 @@ namespace Nearsens.Web.Controllers
 
         SqlPlacesRepository placesRepository = new SqlPlacesRepository();
         SqlOffersRepository offersRepository = new SqlOffersRepository();
+        private static string BASE_URL = "https://nearsens.somee.com/";
 
         [Authorize]
         [HttpPost]
@@ -27,7 +28,7 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
 
                 var messages = await DoSomething(uploadPath);
 
@@ -48,7 +49,7 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
 
                 var messages = await DoSomething(uploadPath);
 
@@ -69,7 +70,7 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
 
                 var messages = await DoSomething(uploadPath);
 
@@ -90,7 +91,7 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
 
                 var messages = await DoSomething(uploadPath);
 
@@ -111,7 +112,7 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath("~/Images/" + userId + "/" + placeId);
+                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
 
                 var messages = await DoSomething(uploadPath);
 
