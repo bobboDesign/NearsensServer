@@ -14,9 +14,17 @@ namespace Nearsens.Web.Controllers
         SqlOffersRepository repository = new SqlOffersRepository();
 
         // GET: api/Offers
-        public IEnumerable<GetNearestOffersQuery> Get(double lat, double lng, string category = null, string subcategory = null, int? distanceLimit = null)
+        public IEnumerable<GetNearestOffersQuery> Get(double lat, double lng, int page, int pageSize, string category = null, string subcategory = null, int? distanceLimit = null)
         {
-            return repository.GetNearestOffers(lat, lng, category, subcategory, distanceLimit);
+            var start = DateTime.Now.Millisecond;
+            var skip = (page - 1) * pageSize;
+            var list = repository
+                .GetNearestOffers(lat, lng, category, subcategory, distanceLimit)
+                .Skip(skip)
+                .Take(pageSize);
+            var end = DateTime.Now.Millisecond;
+            var diff = end - start;
+            return list;
         }
 
         // GET: api/Offers/5

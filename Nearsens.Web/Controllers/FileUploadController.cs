@@ -19,7 +19,6 @@ namespace Nearsens.Web.Controllers
 
         SqlPlacesRepository placesRepository = new SqlPlacesRepository();
         SqlOffersRepository offersRepository = new SqlOffersRepository();
-        private static string BASE_URL = "https://nearsens.somee.com/";
 
         [Authorize]
         [HttpPost]
@@ -28,11 +27,12 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
+                string relativePath = "Images\\" + userId + "\\" + placeId;
+                string uploadPath = HttpContext.Current.Server.MapPath("~\\" + relativePath);
 
                 var messages = await DoSomething(uploadPath);
 
-                placesRepository.InsertIcon(placeId, uploadPath + "\\" + messages.First());
+                placesRepository.InsertIcon(placeId, relativePath + "\\" + messages.First());
                 return messages;
             }
             else
@@ -49,11 +49,12 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
+                string relativePath = "Images\\" + userId + "\\" + placeId;
+                string uploadPath = HttpContext.Current.Server.MapPath("~\\" + relativePath);
 
                 var messages = await DoSomething(uploadPath);
 
-                placesRepository.InsertPlacePhotos(placeId, messages.Select(xx => xx.Insert(0, uploadPath + "\\")).ToList());
+                placesRepository.InsertPlacePhotos(placeId, messages.Select(xx => xx.Insert(0, relativePath + "\\")).ToList());
                 return messages;
             }
             else
@@ -70,11 +71,12 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
+                string relativePath = "Images\\" + userId + "\\" + placeId;
+                string uploadPath = HttpContext.Current.Server.MapPath("~\\" + relativePath);
 
                 var messages = await DoSomething(uploadPath);
 
-                offersRepository.InsertIcon(offerId, uploadPath + "\\" + messages.First());
+                offersRepository.InsertIcon(offerId, relativePath + "\\" + messages.First());
                 return messages;
             }
             else
@@ -91,11 +93,12 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
+                string relativePath = "Images\\" + userId + "\\" + placeId;
+                string uploadPath = HttpContext.Current.Server.MapPath("~\\" + relativePath);
 
                 var messages = await DoSomething(uploadPath);
 
-                offersRepository.InsertMainPhoto(offerId, uploadPath + "\\" + messages.First());
+                offersRepository.InsertMainPhoto(offerId, relativePath + "\\" + messages.First());
                 return messages;
             }
             else
@@ -112,11 +115,12 @@ namespace Nearsens.Web.Controllers
             if (Request.Content.IsMimeMultipartContent())
             {
                 var userId = HttpContext.Current.User.Identity.GetUserId();
-                string uploadPath = HttpContext.Current.Server.MapPath(BASE_URL + "Images/" + userId + "/" + placeId);
+                string relativePath = "Images\\" + userId + "\\" + placeId;
+                string uploadPath = HttpContext.Current.Server.MapPath("~\\" + relativePath);
 
                 var messages = await DoSomething(uploadPath);
 
-                offersRepository.InsertOfferPhotos(offerId, messages.Select(xx => xx.Insert(0, uploadPath + "\\")).ToList());
+                offersRepository.InsertOfferPhotos(offerId, messages.Select(xx => xx.Insert(0, relativePath + "\\")).ToList());
                 return messages;
             }
             else
